@@ -1,4 +1,7 @@
-import { LogOut, User } from "lucide-react";
+"use client";
+
+import { Loader, LogIn, LogOut, User } from "lucide-react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 const iconProps = {
@@ -6,6 +9,16 @@ const iconProps = {
 };
 
 const Header = () => {
+  const { status, data } = useSession();
+
+  const handleLogin = async () => {
+    await signIn();
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+  };
+
   return (
     <header className="w-full bg-white min-h-14 py-3 shadow">
       <nav className="w-full max-w-7xl mx-auto px-3 xl:px-0 flex flex-col sm:flex-row justify-center sm:justify-between gap-4 items-center">
@@ -16,17 +29,35 @@ const Header = () => {
         </Link>
 
         <ul className="flex gap-4 items-baseline pt-0.5">
-          <li>
-            <Link href="/profile">
-              <User {...iconProps} />
-            </Link>
-          </li>
+          {status === "loading" && (
+            <li className="animate-spin">
+              <Loader {...iconProps} />
+            </li>
+          )}
 
-          <li>
-            <button>
-              <LogOut {...iconProps} />
-            </button>
-          </li>
+          {status === "unauthenticated" && (
+            <li>
+              <button className="cursor-pointer" onClick={handleLogin}>
+                <LogIn color="#2b7fff" />
+              </button>
+            </li>
+          )}
+
+          {status === "authenticated" && (
+            <>
+              <li>
+                <Link href="/dashboard">
+                  <User {...iconProps} />
+                </Link>
+              </li>
+
+              <li>
+                <button className="cursor-pointer" onClick={handleLogout}>
+                  <LogOut color="#e40000" />
+                </button>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </header>
