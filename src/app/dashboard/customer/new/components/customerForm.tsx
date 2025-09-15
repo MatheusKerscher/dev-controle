@@ -1,10 +1,21 @@
 "use client";
 
-import Input from "@/components/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleUser, Mail, MapPin, Phone, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import toast from "react-hot-toast";
+import {
+  CircleUser,
+  LoaderCircle,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+} from "lucide-react";
+
+import Input from "@/components/input";
+import api from "@/lib/axios";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   name: z.string().min(1, "O campo nome completo é obrigatório"),
@@ -13,14 +24,10 @@ const schema = z.object({
     .min(1, "O campo nome completo é obrigatório"),
   phone: z.string().refine(
     (value) => {
-      return (
-        /^(?:\(\d{2}\)\s?)?\d{9}$/.test(value) ||
-        /^\d{2}\s\d{9}$/.test(value) ||
-        /^\d{11}$/.test(value)
-      );
+      return /^\d{11}$/.test(value);
     },
     {
-      message: "O campo telefone deve ter o formato (DD) 999999999",
+      message: "O campo telefone deve ter o formato DD999999999",
     }
   ),
   address: z.string(),
@@ -29,10 +36,12 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const CustomerForm = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -43,7 +52,24 @@ const CustomerForm = () => {
     },
   });
 
-  const handleRegisterCustomer = (data: FormData) => {};
+  const handleRegisterCustomer = async (data: FormData) => {
+    try {
+      const response = await api.post("/api/customer", {
+        ...data,
+      });
+
+      if (response.status === 201) {
+        toast.success(response.data.message);
+        router.replace("/dashboard/customer");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error(
+        "Não foi possível cadastrar o cliente. Por favor verifique os dados e tente novamente"
+      );
+    }
+  };
 
   return (
     <form
@@ -94,9 +120,17 @@ const CustomerForm = () => {
 
       <button
         type="submit"
-        className="md:self-end flex items-center justify-center gap-2 bg-blue-500 text-white py-1 px-2 rounded-md"
+        className="md:self-end flex items-center justify-center gap-2 bg-blue-500 text-white py-1 px-2 rounded-md cursor-pointer disabled:bg-blue-300 disabled:cursor-not-allowed"
+        disabled={!isValid || isSubmitting}
       >
-        <Save size={22} /> Cadastrar
+        {isSubmitting ? (
+          <span className="animate-spin">
+            <LoaderCircle />
+          </span>
+        ) : (
+          <Save size={22} />
+        )}
+        Cadastrar
       </button>
     </form>
   );
