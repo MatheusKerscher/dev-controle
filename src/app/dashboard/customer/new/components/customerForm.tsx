@@ -60,6 +60,8 @@ const CustomerForm = () => {
 
       if (response.status === 201) {
         toast.success(response.data.message);
+
+        router.refresh();
         router.replace("/dashboard/customer");
       } else {
         toast.error(response.data.message);

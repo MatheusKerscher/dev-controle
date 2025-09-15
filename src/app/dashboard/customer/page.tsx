@@ -1,8 +1,20 @@
-import { Plus } from "lucide-react";
-import CardClient from "./components/cardClient";
 import Link from "next/link";
+import { Frown, Plus } from "lucide-react";
 
-const Clients = () => {
+import CardClient from "./components/cardClient";
+import { getSession } from "@/utils/server/session";
+import prismaClient from "@/lib/prisma";
+import type { CustomerProps } from "@/utils/types/customer.type";
+
+const CustomerProps = async () => {
+  const session = await getSession();
+
+  const customerList: CustomerProps[] = await prismaClient.customer.findMany({
+    where: {
+      userId: session?.user.id,
+    },
+  });
+
   return (
     <>
       <section className="flex justify-between items-center">
@@ -17,11 +29,26 @@ const Clients = () => {
         </Link>
       </section>
 
-      <section className="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <CardClient />
-      </section>
+      {customerList.length > 0 ? (
+        <section className="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {customerList.map((c) => (
+            <CardClient
+              key={c.id}
+              name={c.name}
+              email={c.email}
+              phone={c.phone}
+              address={c.address}
+            />
+          ))}
+        </section>
+      ) : (
+        <div className="mt-6 text-gray-400 font-semibold flex gap-2 justify-center flex-wrap">
+          <p className="text-center">Nenhum cliente cadastrado até o momento</p>
+          <Frown />
+        </div>
+      )}
     </>
   );
 };
 
-export default Clients;
+export default CustomerProps;
