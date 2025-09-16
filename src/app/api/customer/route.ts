@@ -1,11 +1,10 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-import { authOptions } from "@/lib/auth";
 import prismaClient from "@/lib/prisma";
+import { getSession } from "@/utils/server/session";
 
 const POST = async (req: Request) => {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   if (!session) {
     return NextResponse.json(
@@ -48,4 +47,83 @@ const POST = async (req: Request) => {
   }
 };
 
-export { POST };
+const DELETE = async (request: Request) => {
+  const session = await getSession();
+
+  if (!session) {
+    return NextResponse.json(
+      {
+        message: "Para deletar um cliente você precisa estar logado",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  try {
+    console.log(request.url);
+    const { searchParams } = new URL(request.url);
+    const customerId = searchParams.get("id");
+
+    if (!customerId) {
+      return NextResponse.json(
+        {
+          message:
+            "Não foi possível deletar o cliente. Por favor, tente novamente mais tarde",
+        },
+        { status: 404 }
+      );
+    }
+
+    const tickets = await prismaClient.ticket.findFirst({
+      where: {
+        status: "open",
+        customer: {
+          id: customerId,
+          userId: session.user.id,
+        },
+      },
+    });
+
+    if (tickets) {
+      return NextResponse.json(
+        {
+          message:
+            "Esse cliente possui chamados em aberto. Por favor, encerre os chamados dele antes de deletar ele",
+        },
+        { status: 404 }
+      );
+    }
+
+    const response = await prismaClient.customer.delete({
+      where: {
+        id: customerId,
+        userId: session.user.id,
+      },
+    });
+
+    if (!response.id) {
+      return NextResponse.json(
+        {
+          message:
+            "Não foi possível deletar o cliente. Por favor, tente novamente mais tarde",
+        },
+        { status: 404 }
+      );
+    }
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        message:
+          "Não foi possível deletar o cliente. Por favor, tente novamente mais tarde",
+      },
+      { status: 400 }
+    );
+  }
+};
+
+export { POST, DELETE };

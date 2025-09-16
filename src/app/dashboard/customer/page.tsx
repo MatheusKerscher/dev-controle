@@ -34,6 +34,7 @@ const CustomerProps = async () => {
           {customerList.map((c) => (
             <CardClient
               key={c.id}
+              id={c.id}
               name={c.name}
               email={c.email}
               phone={c.phone}
