@@ -1,22 +1,17 @@
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import CustomerForm from "./components/customerForm";
+import FormHeader from "@/components/formHeader";
 
 const NewCustomer = () => {
   return (
-    <>
-      <section className="flex gap-2 items-center">
-        <Link href="/dashboard/customer" className=" cursor-pointer">
-          <ChevronLeft size={28} />
-        </Link>
-
-        <h2 className="text-lg sm:text-xl font-bold">Cadastrar cliente</h2>
-      </section>
+    <main>
+      <FormHeader title="Cadastrar cliente" returnUrl="/dashboard/customer" />
 
       <section>
         <CustomerForm />
       </section>
-    </>
+    </main>
   );
 };
 
