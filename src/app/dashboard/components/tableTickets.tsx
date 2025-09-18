@@ -1,11 +1,12 @@
 import prismaClient from "@/lib/prisma";
 import { getSession } from "@/utils/server/session";
 import TicketActions from "./ticketActions";
+import type { TicketProps } from "@/utils/types/ticket.type";
 
 const TableTickets = async () => {
   const session = (await getSession())!;
 
-  const ticketList = await prismaClient.ticket.findMany({
+  const ticketList: TicketProps[] = await prismaClient.ticket.findMany({
     where: {
       userId: session.user.id,
     },
@@ -30,7 +31,7 @@ const TableTickets = async () => {
       <thead className="border-b border-b-gray-300">
         <tr className="text-left h-12">
           <th className="pl-2">CHAMADO</th>
-          <th className="pl-2">CLIENTE</th>
+          <th className="hidden sm:table-cell">CLIENTE</th>
           <th className="hidden sm:table-cell">DATA CADASTRO</th>
           <th>STATUS</th>
           <th className="pr-2 text-end">#</th>
@@ -41,10 +42,12 @@ const TableTickets = async () => {
         {ticketList.map((t) => (
           <tr
             key={t.id}
-            className="border-b border-b-gray-300 h-12 last:border-0 hover:bg-slate-100 duration-100 transition-colors"
+            className="border-b border-b-gray-300 h-20 sm:h-12 last:border-0 hover:bg-slate-100 duration-100 transition-colors"
           >
             <td className="font-normal pl-2">{t.name}</td>
-            <td className="font-normal pl-2">{t.customer?.name}</td>
+            <td className="font-normal hidden sm:table-cell">
+              {t.customer?.name}
+            </td>
 
             <td className="font-normal hidden sm:table-cell">
               {t.created_at?.toLocaleDateString("pt-BR")}
@@ -61,7 +64,7 @@ const TableTickets = async () => {
             </td>
 
             <td className="pr-2">
-              <TicketActions status={t.status} ticketId={t.id} />
+              <TicketActions ticket={t} />
             </td>
           </tr>
         ))}

@@ -5,23 +5,26 @@ import toast from "react-hot-toast";
 import { Check, Eye, X } from "lucide-react";
 
 import api from "@/lib/axios";
+import { useContext } from "react";
+import { ModalContext } from "@/providers/modal";
+import type { TicketProps } from "@/utils/types/ticket.type";
 
 const iconProps = {
   size: 20,
 };
 
 type TicketActionProps = {
-  ticketId: string;
-  status: string;
+  ticket: TicketProps;
 };
 
-const TicketActions = ({ ticketId, status }: TicketActionProps) => {
+const TicketActions = ({ ticket }: TicketActionProps) => {
+  const { handleVisible, setTicket } = useContext(ModalContext);
   const router = useRouter();
 
   const handleToggleTicketStatus = async () => {
     try {
       const response = await api.patch("/api/ticket", {
-        id: ticketId,
+        id: ticket.id,
       });
 
       if (response.status === 200) {
@@ -38,17 +41,22 @@ const TicketActions = ({ ticketId, status }: TicketActionProps) => {
     }
   };
 
+  const handleOpenModal = () => {
+    setTicket(ticket);
+    handleVisible();
+  };
+
   return (
-    <div className="flex gap-3 items-center justify-center md:justify-end flex-wrap">
+    <div className="flex gap-3 items-center justify-end flex-wrap">
       <button className="cursor-pointer" onClick={handleToggleTicketStatus}>
-        {status === "OPEN" ? (
+        {ticket.status === "OPEN" ? (
           <Check {...iconProps} color="#00c950" />
         ) : (
           <X {...iconProps} color="#fb2c36 " />
         )}
       </button>
 
-      <button className="cursor-pointer">
+      <button className="cursor-pointer" onClick={handleOpenModal}>
         <Eye {...iconProps} />
       </button>
     </div>

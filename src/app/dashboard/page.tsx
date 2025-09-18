@@ -2,8 +2,6 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import TableTickets from "./components/tableTickets";
-import { getSession } from "@/utils/server/session";
-import prismaClient from "@/lib/prisma";
 
 const Dashboard = async () => {
   return (

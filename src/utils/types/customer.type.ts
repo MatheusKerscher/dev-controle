@@ -1,4 +1,4 @@
-import type { Customer as CustomerORM } from "@/generated/prisma";
+import type { Customer } from "@/generated/prisma";
 
 export interface CustomerProps
-  extends Pick<CustomerORM, "id" | "name" | "email" | "phone" | "address"> {}
+  extends Pick<Customer, "id" | "name" | "email" | "phone" | "address"> {}

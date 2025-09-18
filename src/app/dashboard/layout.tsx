@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Container from "@/components/container";
 import Header from "./components/header";
 import { getSession } from "@/utils/server/session";
+import ModalProvider from "@/providers/modal";
 
 const DashboardLayout = async ({
   children,
@@ -16,10 +17,12 @@ const DashboardLayout = async ({
   }
 
   return (
-    <Container>
-      <Header />
-      {children}
-    </Container>
+    <ModalProvider>
+      <Container>
+        <Header />
+        {children}
+      </Container>
+    </ModalProvider>
   );
 };
 
