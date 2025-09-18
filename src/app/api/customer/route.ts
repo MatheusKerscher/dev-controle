@@ -47,7 +47,7 @@ const POST = async (req: Request) => {
   }
 };
 
-const DELETE = async (request: Request) => {
+const DELETE = async (req: Request) => {
   const session = await getSession();
 
   if (!session) {
@@ -62,8 +62,7 @@ const DELETE = async (request: Request) => {
   }
 
   try {
-    console.log(request.url);
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const customerId = searchParams.get("id");
 
     if (!customerId) {
@@ -115,7 +114,6 @@ const DELETE = async (request: Request) => {
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       {
         message:
