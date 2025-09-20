@@ -3,6 +3,53 @@ import { NextResponse } from "next/server";
 import prismaClient from "@/lib/prisma";
 import { getSession } from "@/utils/server/session";
 
+const GET = async (req: Request) => {
+  try {
+    const { searchParams } = new URL(req.url);
+    const customerEmail = searchParams.get("email");
+
+    if (!customerEmail) {
+      return NextResponse.json(
+        {
+          message: "Por favor, informe um e-mail para poder buscar o cliente",
+        },
+        { status: 404 }
+      );
+    }
+
+    const customer = await prismaClient.customer.findFirst({
+      where: {
+        email: customerEmail,
+      },
+    });
+
+    if (!customer) {
+      return NextResponse.json(
+        {
+          message:
+            "Não foi possível encontrar o cliente. Por favor, tente novamente mais tarde",
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      customer: {
+        id: customer.id,
+        name: customer.name,
+      },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message:
+          "Não foi possível encontrar o cliente. Por favor, tente novamente mais tarde",
+      },
+      { status: 400 }
+    );
+  }
+};
+
 const POST = async (req: Request) => {
   const session = await getSession();
 
@@ -124,4 +171,4 @@ const DELETE = async (req: Request) => {
   }
 };
 
-export { POST, DELETE };
+export { GET, POST, DELETE };

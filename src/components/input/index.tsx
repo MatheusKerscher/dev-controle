@@ -25,7 +25,7 @@ const Input = ({
   icon,
 }: InputProps) => {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 flex-1">
       {label && (
         <label htmlFor={name} className="font-semibold cursor-pointer">
           {label}

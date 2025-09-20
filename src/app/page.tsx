@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import homeImage from "@/assets/home-illustration.svg";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -19,6 +20,13 @@ export default function Home() {
         width={300}
         height={300}
       />
+
+      <Link
+        href="/open"
+        className="mt-8 bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold text-lg hover:scale-105 transition-all duration-300"
+      >
+        Abrir chamado
+      </Link>
     </main>
   );
 }

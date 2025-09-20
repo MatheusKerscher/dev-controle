@@ -71,7 +71,7 @@ const NewTicket = async () => {
               <textarea
                 id="description"
                 name="description"
-                className="resize-none h-40 w-full outline-0 text-slate-600 p-1 border rounded-md focus:border-2 transition-all"
+                className="resize-none h-40 w-full outline-0 text-slate-600 p-1 border border-slate-400 rounded-md focus:border-2 transition-all"
                 placeholder="Descreva o problema que está ocorrendo..."
               ></textarea>
             </div>

@@ -3,13 +3,15 @@
 import { Loader, LogIn, LogOut, User } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const iconProps = {
   color: "#4b5563",
 };
 
 const Header = () => {
-  const { status, data } = useSession();
+  const router = useRouter();
+  const { status } = useSession();
 
   const handleLogin = async () => {
     await signIn();

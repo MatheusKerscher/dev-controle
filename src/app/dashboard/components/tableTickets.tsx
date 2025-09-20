@@ -4,11 +4,11 @@ import TicketActions from "./ticketActions";
 import type { TicketProps } from "@/utils/types/ticket.type";
 
 const TableTickets = async () => {
-  const session = (await getSession())!;
+  const session = await getSession();
 
   const ticketList: TicketProps[] = await prismaClient.ticket.findMany({
     where: {
-      userId: session.user.id,
+      userId: session?.user.id,
     },
     omit: {
       updated_at: true,
