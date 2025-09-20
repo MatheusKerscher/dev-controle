@@ -135,7 +135,7 @@ const FormTicket = () => {
 
             <button
               type="button"
-              className="rounded bg-blue-500 p-2 flex gap-2 text-white items-center justify-between cursor-pointer self-start"
+              className="w-full sm:w-auto rounded bg-blue-500 p-2 flex gap-2 text-white items-center justify-between cursor-pointer self-start"
               onClick={handleSearchCustomer}
             >
               Procurar cliente <Search size={20} />
